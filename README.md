@@ -47,7 +47,7 @@ The _loadgen_ goroutine creates as many goroutines as TPS specified every second
 
 Decoupling the _hammers_ implementation from the TPS generation and orchestration gives a lot of opportunity for extensibility. There can be hammers of different types, for example, a hammer of type _HTTPHammer_ knows how to trigger HTTP requests, but a hammer of type _IoTHammer_ knows how to generate MQTT requests. Moreover, the _Hammer_ interface allows any user to write their own hammer implementation as long as it complies with the interface. 
 
-**Will it be a problem to have so many goroutines running at once?**
+**Will it be a problem to have so many goroutines running at once?**  
 Goroutines are very lightweight and efficient as they do not map directly to OS threads. In the tests that I have done, only a handful of threads are used for ~100 goroutines in-flight, so having thousands or goroutines should not be a problem at all. 
 
 **Can the aggregator become a bottleneck?**  
