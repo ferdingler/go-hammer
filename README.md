@@ -45,7 +45,7 @@ This library can also evolve to provide useful tools to the _hammers_ to make th
 
 The _loadgen_ goroutine creates as many goroutines as TPS specified every second. These goroutines are the _hammers_ that generate a request targeting the endpoint under test. They capture the response of the request, measure the roundtrip latency and communicate the results back to a shared _responses_ channel–– they die right after that. There is an _aggregator_ goroutine reading the responses from the shared channel, writing them to standard output and keeping them in-memory to compute a final summary with latency statistics. The _main_ goroutine serves as an orchestrator and tells the _aggregator_ to stop and summarize results when it receives a signal of completion from _loadgen_. 
 
-![Goroutines](docs/goroutines.png)
+![Goroutines](docs/goroutines.svg)
 
 Decoupling the _hammers_ implementation from the TPS generation and orchestration gives a lot of opportunity for extensibility. There can be hammers of different types, for example, a hammer of type _HTTPHammer_ knows how to trigger HTTP requests, but a hammer of type _IoTHammer_ knows how to generate MQTT requests. Moreover, the _Hammer_ interface allows any user to write their own hammer implementation as long as it complies with the interface. 
 
@@ -96,3 +96,9 @@ The current implementation triggers all requests in the beginning of a second, o
 
 **Replay production load**  
 Given a set of access logs captured from real production traffic, add a capability to this library to create a test scenario that replays and reproduces the exact same traffic taken from the logs. There needs to be a process that reads the logs first and builds a timeline to be executed during the load generation. A challenge here is that access logs do not contain body payloads, only headers. 
+
+The following diagram illustrates the architecture for replaying a timeline of logs. Each goroutine involved is represented as a circle. The timeline goroutine holds an in-memory representation of the timeline of how requests happened, it should expose an API to get the next batch of requests for the following second, it could return zero if there are no requests to be made in that given second. 
+
+![ReplayLogs](docs/replaylogs.svg)
+
+Building the timeline itself from a set of logs is not represented in the diagram. That's probably the job of another tool that given a set of logs in a particular format, it builds a timeline that go-hammer can understand. 
