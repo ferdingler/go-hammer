@@ -37,25 +37,26 @@ type Hammer interface {
 
 This library can also evolve to provide useful tools to the _hammers_ to make their implementation easier, for example, a random data generator or a user credentials provider. 
 
-## Why Go?
-
-A load generator has the ability to generate _concurrent_ requests against a defined target, and one of the nicest features in Go is actually [Concurrency](https://www.youtube.com/watch?v=cN_DpYBzKso) –– It is easy to program and also very resource efficient. [Goroutines](https://golang.org/doc/faq#goroutines) and [Channels](https://golangbot.com/channels/) are the main characters involved in it. Goroutines are basically functions that run concurrently with other functions; Not to be confused with threads, goroutines are actually multiplexed to a limited number of OS threads and is one of the reasons why concurrency in Go is efficient. Channels are message pipes where Goroutines can communicate to each other in a race-condition-safe manner.
+<hr>
 
 ## TPS Generator
 
-**Goroutine per request**  
-There are as many goroutines as TPS specified spawned every second. I'm calling them Hammers and they are short-lived because they die as soon as their request is over. There can be hammers of different types, for example, a hammer of type HTTP knows how to trigger HTTP requests, but a hammer of type IoT knows how to generate MQTT requests. This allows for extensibility and to decouple the actual testing logic from the load generation orchestration. The following diagram illustrates the goroutines involved, which are represented by circles:
+The _loadgen_ goroutine creates as many goroutines as TPS specified every second. These goroutines are the _hammers_ that generate a request targeting the endpoint under test. They capture the response of the request, measure the roundtrip latency and communicate the results back to a shared _responses_ channel–– they die right after that. There is an _aggregator_ goroutine reading the responses from the shared channel, writing them to standard output and keeping them in-memory to compute a final summary with latency statistics. The _main_ goroutine serves as an orchestrator and tells the _aggregator_ to stop and summarize results when it receives a signal of completion from _loadgen_. 
 
 ![Goroutines](docs/goroutines.png)
 
-My initial concern with this approach was the high number of goroutines created every second, but this seems to be less of a concern as goroutines are very efficient and lightweight. However I'm still worried about a situation where the endpoint under test is slow to respond, causing the Hammers to take longer to complete and the _running active_ count of Hammers will start to pile up. 
+Decoupling the _hammers_ implementation from the TPS generation and orchestration gives a lot of opportunity for extensibility. There can be hammers of different types, for example, a hammer of type _HTTPHammer_ knows how to trigger HTTP requests, but a hammer of type _IoTHammer_ knows how to generate MQTT requests. Moreover, the _Hammer_ interface allows any user to write their own hammer implementation as long as it complies with the interface. 
 
-**TODO:** Find out if the aggregator goroutine will become a bottleneck? When the Hammers write to the _responses channel_ they block until the _aggregator_ reads; This is the nature of how channels work because they are also a synchronization mechanism, however, this may cause the _aggregator_ to become a bottleneck as it will block the Hammers until it catches up draining the channel.
+**Will it be a problem to have so many goroutines running at once?**
+Goroutines are very lightweight and efficient as they do not map directly to OS threads. In the tests that I have done, only a handful of threads are used for ~100 goroutines in-flight, so having thousands or goroutines should not be a problem at all. 
 
-### Other approaches considered
+**Can the aggregator become a bottleneck?**  
+Possibly above 10K TPS. When the hammers write to the _responses_ channel they block until the _aggregator_ reads; This is the nature of how channels work because they are also a synchronization mechanism. In my benchmark, the _aggregator_ takes on average 0.05ms to process a response from the channel, which means that it can flush 10,000 messages in 500ms. So, as long as the _aggregator_ can drain the entire channel in less than 1 second, then it won't become a bottleneck.
+
+### Alternatives considered
 
 **Long living goroutines**  
-Create as many goroutines as TPS specified where each goroutine is in charge of generating a request (i.e. HTTP) every second. The challenge is that the goroutine waits for the request to resolve and if it takes longer than a second, the system as whole will not meet the desired TPS.
+Instead of creating short-lived single goroutines (hammers) per request, I considered creating as many goroutines as TPS specified and have each goroutine be long-living for the duration of the load test (i.e. 30 minutes). Each of these workers would be in charge of generating a request every second. The challenge is that if a given request takes longer than 1 second to complete, the system will not meet the desired TPS. This is not a good approach. 
 
 ## Run tests
 
@@ -74,15 +75,22 @@ go tool pprof cpu.prof
 
 ## Limits
 
-The max TPS seems to be constrained by the host OS max open files limit. The package net/http opens a socket for every HTTP request in-flight. In my macbook this seems pretty low as it breaks at ~225 TPS. Command to find this limit:
+The max TPS is usually constrained by the host OS max open files limit. The package net/http opens a socket for every HTTP request in-flight. To find this limit in Unix use the following command:
 
 ```
 ulimit -n
 ```
 
-I have tested on an EC2 instance t2.micro with Amazon Linux 2 and was able to go to 500 TPS. Still need to test within a docker container running on Fargate.
+Increase this limit by passing the desired number:
 
-## Other thoughts
+```
+ulimit -n 1000
+```
 
-**Distribute requests evenly within the timeframe of a second?**  
-The current implementation triggers all requests in the beginning of a second, obviously each consecutive request is triggered slightly (a few microseconds?) after the previous one, but this means that all the remaining time before the second is over is empty and quiet with no requests. I suspect that distributing all of these requests evenly within the timeframe of a second would mimic real-world traffic more realistically and will create less pressure on the system under test.
+## Ideas to work on
+
+**Distribute requests evenly within the timeframe of a second**  
+The current implementation triggers all requests in the beginning of a second, obviously each consecutive request is triggered slightly (a few microseconds) after the previous one, but this means that all the remaining time before the second is over is empty and quiet with no requests. The idea would be to distribute all of these requests evenly within the timeframe of a second to mimic real-world traffic patterns more realistically and therefore avoid spikes of pressure on the system under test.
+
+**Replay production load**
+Given a set of access logs captured from real production traffic, add a capability to this library to create a test scenario that replays and reproduces the exact same traffic taken from the logs. There needs to be a process that reads the logs first and builds a timeline to be executed during the load generation. A challenge here is that access logs do not contain body payloads, only headers. 
