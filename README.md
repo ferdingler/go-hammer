@@ -1,6 +1,6 @@
 # go-hammer
 
-<img src="docs/logo.png" align="right" height="120">
+<img src="docs/logo.svg" align="right" height="130">
 
 ![Build](https://github.com/ferdingler/go-hammer/workflows/Build/badge.svg)
 
