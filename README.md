@@ -1,10 +1,11 @@
 # go-hammer
 
-<img src="docs/logo.svg" align="right" height="130">
+<img src="docs/logo.svg" align="right" height="140">
 
 ![Build](https://github.com/ferdingler/go-hammer/workflows/Build/badge.svg)
 
 A load generator library written in Go.
+<br><br>
 
 ## Usage
 
