@@ -92,5 +92,5 @@ ulimit -n 1000
 **Distribute requests evenly within the timeframe of a second**  
 The current implementation triggers all requests in the beginning of a second, obviously each consecutive request is triggered slightly (a few microseconds) after the previous one, but this means that all the remaining time before the second is over is empty and quiet with no requests. The idea would be to distribute all of these requests evenly within the timeframe of a second to mimic real-world traffic patterns more realistically and therefore avoid spikes of pressure on the system under test.
 
-**Replay production load**
+**Replay production load**  
 Given a set of access logs captured from real production traffic, add a capability to this library to create a test scenario that replays and reproduces the exact same traffic taken from the logs. There needs to be a process that reads the logs first and builds a timeline to be executed during the load generation. A challenge here is that access logs do not contain body payloads, only headers. 

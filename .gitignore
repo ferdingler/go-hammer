@@ -16,3 +16,6 @@
 # vendor/
 .vscode/
 results/
+
+# Macbook annoying files
+.DS_Store
