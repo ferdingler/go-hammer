@@ -1,4 +1,4 @@
-package gohammer
+package core
 
 // RunConfig holds details about the loadgen execution
 type RunConfig struct {

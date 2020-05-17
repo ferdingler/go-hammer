@@ -1,4 +1,4 @@
-package gohammer
+package core
 
 import (
 	"sync"
