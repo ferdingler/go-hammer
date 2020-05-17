@@ -23,7 +23,7 @@ type HammerResponse struct {
 func useHammer(h Hammer, out chan HammerResponse, wg *sync.WaitGroup) {
 	response := h.Hit()
 	out <- response
-	wg.Done()
+	defer wg.Done()
 }
 
 // Built-in Hammers

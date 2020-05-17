@@ -4,7 +4,7 @@
 
 ![Build](https://github.com/ferdingler/go-hammer/workflows/Build/badge.svg)
 
-A load generator library written in Go.
+A load generator written in Go.
 <br><br>
 
 ## Usage
