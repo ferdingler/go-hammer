@@ -2,42 +2,47 @@ package core
 
 import (
 	"testing"
+	"time"
 )
 
-func TestP50(t *testing.T) {
-	values := getValues()
-	p := percentile(values, 50)
-	if p != 9 {
-		t.Error("p50 should be 9", p)
-	}
-}
+func TestAggregator(t *testing.T) {
+	// Aggregator listens for responses in a channel
+	responses := make(chan HammerResponse)
+	// And listens for a stop signal
+	stop := make(chan bool)
 
-func TestP90(t *testing.T) {
-	values := getValues()
-	p := percentile(values, 90)
-	if p != 15 {
-		t.Error("p90 should be 15", p)
-	}
-}
+	// Run aggregator, it gives back a channel
+	// where the summary will be returned.
+	// Since it runs in a goroutine, need a timeout
+	// to fail the test if it exceeds the time.
+	timeout := time.After(5 * time.Second)
+	results := aggregate(responses, stop)
 
-func TestP99(t *testing.T) {
-	values := getValues()
-	p := percentile(values, 99)
-	if p != 15 {
-		t.Error("p90 should be 15", p)
+	// Generate and send some responses to aggregator
+	responses <- HammerResponse{
+		Latency:   1,
+		Status:    200,
+		Timestamp: time.Now(),
+		Failed:    false,
 	}
-}
 
-func getValues() []int {
-	return []int{
-		3,
-		5,
-		7,
-		8,
-		9,
-		11,
-		13,
-		15,
-		15,
+	responses <- HammerResponse{
+		Latency:   2,
+		Status:    200,
+		Timestamp: time.Now(),
+		Failed:    false,
+	}
+
+	// Stop aggregator
+	stop <- true
+
+	// Collect summary
+	select {
+	case summary := <-results:
+		if summary.p99 <= 0 {
+			t.Errorf("Expected p99 to be greater than zero, got %d", summary.p99)
+		}
+	case <-timeout:
+		t.Error("Test timeout exceeded")
 	}
 }
