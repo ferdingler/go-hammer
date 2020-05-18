@@ -36,14 +36,16 @@ func useHammer(h Hammer, out chan HammerResponse, wg *sync.WaitGroup) {
 // HTTPHammer built-in for http requests
 type HTTPHammer struct {
 	client      *http.Client
+	request     *http.Request
 	Endpoint    string
 	Method      string
 	ContentType string
 	Body        []byte
+	Headers     map[string]string
 }
 
 // Hit method for HTTPHammer
-func (h HTTPHammer) Hit() HammerResponse {
+func (h *HTTPHammer) Hit() HammerResponse {
 	if h.client == nil {
 		h.client = new(http.Client)
 		h.client.Timeout = time.Second * 10
@@ -75,16 +77,26 @@ func (h HTTPHammer) Hit() HammerResponse {
 	}
 }
 
-func httpRequest(h HTTPHammer) (*http.Response, error) {
-	body := bytes.NewBuffer(h.Body)
-	req, err := http.NewRequest(h.Method, h.Endpoint, body)
-	if err != nil {
-		panic("Invalid HTTP request")
+func httpRequest(h *HTTPHammer) (*http.Response, error) {
+	if h.request == nil {
+		body := bytes.NewBuffer(h.Body)
+		req, err := http.NewRequest(h.Method, h.Endpoint, body)
+		if err != nil {
+			panic("Invalid HTTP request")
+		}
+
+		if len(h.ContentType) > 0 {
+			req.Header.Add("Content-Type", h.ContentType)
+		}
+
+		if len(h.Headers) > 0 {
+			for key, value := range h.Headers {
+				req.Header.Add(key, value)
+			}
+		}
+
+		h.request = req
 	}
 
-	if len(h.ContentType) > 0 {
-		req.Header.Add("Content-Type", h.ContentType)
-	}
-
-	return h.client.Do(req)
+	return h.client.Do(h.request)
 }

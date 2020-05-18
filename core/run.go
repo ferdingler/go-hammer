@@ -6,8 +6,14 @@ type RunConfig struct {
 	Duration int
 }
 
-// Run runs a load test with a custom hammer
-func Run(config RunConfig, h Hammer) {
+// Run starts a load test with the given run configuration
+// and an object that conforms to the Hammer interface.
+// Returns a unique id for the execution.
+func Run(config RunConfig, h Hammer) string {
+
+	// Generate uuid for execution
+	id := uuid()
+
 	stop := make(chan bool)
 	done, responses := loadgen(config, h)
 	s := aggregate(responses, stop)
@@ -17,4 +23,5 @@ func Run(config RunConfig, h Hammer) {
 	summary := <-s // read summary from aggregator
 
 	outSummary(summary)
+	return id
 }

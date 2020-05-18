@@ -24,7 +24,7 @@ func TestLoadGen(t *testing.T) {
 	})
 
 	// Use the built-in http hammer
-	hammer := HTTPHammer{}
+	hammer := new(HTTPHammer)
 	hammer.Endpoint = "http://127.0.0.1:3000/foo"
 	hammer.Method = "PUT"
 	hammer.ContentType = "application/json"
