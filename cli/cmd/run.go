@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"encoding/json"
+
 	gohammer "github.com/ferdingler/go-hammer/core"
 	"github.com/spf13/cobra"
 )
@@ -10,6 +12,7 @@ var tps int
 var duration int
 var method string
 var payload string
+var headers string
 
 // runCmd represents the run command
 var runCmd = &cobra.Command{
@@ -24,10 +27,16 @@ var runCmd = &cobra.Command{
 			Duration: duration,
 		}
 
-		hammer := gohammer.HTTPHammer{}
+		hammer := new(gohammer.HTTPHammer)
 		hammer.Endpoint = endpoint
 		hammer.Method = method
 		hammer.Body = []byte(payload)
+
+		if len(headers) > 0 {
+			var headersMap map[string]string
+			json.Unmarshal([]byte(headers), &headersMap)
+			hammer.Headers = headersMap
+		}
 
 		gohammer.Run(config, hammer)
 	},
@@ -42,6 +51,7 @@ func init() {
 	runCmd.Flags().IntVarP(&duration, "duration", "", 60, "Desired duration in seconds")
 	runCmd.Flags().StringVarP(&method, "method", "", "GET", "HTTP method")
 	runCmd.Flags().StringVarP(&payload, "payload", "", "", "Payload body for the HTTP requests")
+	runCmd.Flags().StringVarP(&headers, "headers", "", "", "HTTP headers to include on each request")
 
 	// Mark required flags
 	runCmd.MarkFlagRequired("endpoint")

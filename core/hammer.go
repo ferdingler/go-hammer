@@ -36,7 +36,6 @@ func useHammer(h Hammer, out chan HammerResponse, wg *sync.WaitGroup) {
 // HTTPHammer built-in for http requests
 type HTTPHammer struct {
 	client      *http.Client
-	request     *http.Request
 	Endpoint    string
 	Method      string
 	ContentType string
@@ -78,25 +77,21 @@ func (h *HTTPHammer) Hit() HammerResponse {
 }
 
 func httpRequest(h *HTTPHammer) (*http.Response, error) {
-	if h.request == nil {
-		body := bytes.NewBuffer(h.Body)
-		req, err := http.NewRequest(h.Method, h.Endpoint, body)
-		if err != nil {
-			panic("Invalid HTTP request")
-		}
-
-		if len(h.ContentType) > 0 {
-			req.Header.Add("Content-Type", h.ContentType)
-		}
-
-		if len(h.Headers) > 0 {
-			for key, value := range h.Headers {
-				req.Header.Add(key, value)
-			}
-		}
-
-		h.request = req
+	body := bytes.NewBuffer(h.Body)
+	req, err := http.NewRequest(h.Method, h.Endpoint, body)
+	if err != nil {
+		panic("Invalid HTTP request")
 	}
 
-	return h.client.Do(h.request)
+	if len(h.ContentType) > 0 {
+		req.Header.Add("Content-Type", h.ContentType)
+	}
+
+	if len(h.Headers) > 0 {
+		for key, value := range h.Headers {
+			req.Header.Add(key, value)
+		}
+	}
+
+	return h.client.Do(req)
 }
