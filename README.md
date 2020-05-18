@@ -9,9 +9,17 @@ A load generator written in Go.
 
 ## Usage
 
+### Command Line Tool
+
+```bash
+cli run --endpoint https://aws.amazon.com --duration 60 --tps 1
+```
+
+### Library
+
 ```go
 import (
-	gohammer "github.com/ferdingler/go-hammer"
+	gohammer "github.com/ferdingler/go-hammer/core"
 )
 
 func main() {
@@ -20,9 +28,12 @@ func main() {
 		Duration: 60,
 	}
 
-	hammer := gohammer.HTTPHammer{}
+	hammer := new(gohammer.HTTPHammer)
 	hammer.Endpoint = "https://www.google.com"
 	hammer.Method = "GET"
+	hammer.Headers = map[string]string{
+		"content-type": "application/json",
+	}
 
 	gohammer.Run(config, hammer)
 }
