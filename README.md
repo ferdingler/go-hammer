@@ -12,7 +12,7 @@ A load generator written in Go.
 ### Command Line Tool
 
 ```bash
-cli run --endpoint https://aws.amazon.com --duration 60 --tps 1
+cli --endpoint https://aws.amazon.com --duration 60 --tps 1
 ```
 
 ### Library
