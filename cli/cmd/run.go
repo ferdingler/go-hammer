@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	gohammer "github.com/ferdingler/go-hammer/core"
+	"github.com/ferdingler/go-hammer/hammers"
 	"github.com/spf13/cobra"
 )
 
@@ -27,7 +28,7 @@ var runCmd = &cobra.Command{
 			Duration: duration,
 		}
 
-		hammer := new(gohammer.HTTPHammer)
+		hammer := new(hammers.HTTPHammer)
 		hammer.Endpoint = endpoint
 		hammer.Method = method
 		hammer.Body = []byte(payload)
