@@ -20,6 +20,7 @@ cli run --endpoint https://aws.amazon.com --duration 60 --tps 1
 ```go
 import (
 	gohammer "github.com/ferdingler/go-hammer/core"
+	"github.com/ferdingler/go-hammer/hammers"
 )
 
 func main() {
@@ -28,7 +29,7 @@ func main() {
 		Duration: 60,
 	}
 
-	hammer := new(gohammer.HTTPHammer)
+	hammer := new(hammers.HTTPHammer)
 	hammer.Endpoint = "https://www.google.com"
 	hammer.Method = "GET"
 	hammer.Headers = map[string]string{
