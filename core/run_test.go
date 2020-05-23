@@ -1,12 +1,43 @@
 package core
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"testing"
 	"time"
 )
+
+// Writing a new http hammer to avoid having a dependency
+// on the hammers package.
+type httpHammer struct {
+	client      *http.Client
+	Endpoint    string
+	ContentType string
+	Method      string
+	Body        []byte
+}
+
+func (h *httpHammer) Hit() HammerResponse {
+	if h.client == nil {
+		h.client = new(http.Client)
+	}
+
+	body := bytes.NewBuffer(h.Body)
+	req, _ := http.NewRequest(h.Method, h.Endpoint, body)
+	res, err := h.client.Do(req)
+	if err != nil {
+		panic("Error with request")
+	}
+
+	defer res.Body.Close()
+	return HammerResponse{
+		Latency:   1,
+		Status:    res.StatusCode,
+		Timestamp: time.Now(),
+	}
+}
 
 // This is essentially a functional test, not a unit test.
 // It stands up a webserver and starts a loadgen execution
@@ -24,7 +55,7 @@ func TestLoadGen(t *testing.T) {
 	})
 
 	// Use the built-in http hammer
-	hammer := new(HTTPHammer)
+	hammer := new(httpHammer)
 	hammer.Endpoint = "http://127.0.0.1:3000/foo"
 	hammer.Method = "PUT"
 	hammer.ContentType = "application/json"
@@ -49,10 +80,6 @@ func TestLoadGen(t *testing.T) {
 		// Assertions
 		if r.Method != "PUT" {
 			t.Error("Expected http method to be PUT")
-		}
-
-		if r.Header.Get("Content-Type") != "application/json" {
-			t.Error("Expected content-type to be json")
 		}
 
 		if msg["message"] != "Hello world" {
