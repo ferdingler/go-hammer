@@ -4,15 +4,9 @@ import (
 	"bytes"
 	"net/http"
 	"time"
-)
 
-// HammerResponse is information about a hammer response
-type HammerResponse struct {
-	Latency   int // milliseconds
-	Status    int
-	Timestamp time.Time
-	Failed    bool
-}
+	"github.com/ferdingler/go-hammer/core"
+)
 
 // HTTPHammer built-in for http requests
 type HTTPHammer struct {
@@ -25,7 +19,7 @@ type HTTPHammer struct {
 }
 
 // Hit method for HTTPHammer
-func (h *HTTPHammer) Hit() HammerResponse {
+func (h *HTTPHammer) Hit() core.HammerResponse {
 	if h.client == nil {
 		h.client = new(http.Client)
 		h.client.Timeout = time.Second * 10
@@ -40,7 +34,7 @@ func (h *HTTPHammer) Hit() HammerResponse {
 	if err != nil {
 		// non-2xx response doesn't cause an error,
 		// so this error means something bad happened.
-		return HammerResponse{
+		return core.HammerResponse{
 			Latency:   0,
 			Status:    0,
 			Timestamp: start.UTC(),
@@ -50,7 +44,7 @@ func (h *HTTPHammer) Hit() HammerResponse {
 
 	// close response body
 	defer res.Body.Close()
-	return HammerResponse{
+	return core.HammerResponse{
 		Latency:   int(diff.Milliseconds()),
 		Status:    res.StatusCode,
 		Timestamp: start.UTC(),
