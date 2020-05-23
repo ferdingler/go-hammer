@@ -1,9 +1,12 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 
+	"github.com/ferdingler/go-hammer/core"
+	"github.com/ferdingler/go-hammer/hammers"
 	"github.com/spf13/cobra"
 
 	homedir "github.com/mitchellh/go-homedir"
@@ -11,6 +14,12 @@ import (
 )
 
 var cfgFile string
+var endpoint string
+var tps int
+var duration int
+var method string
+var payload string
+var headers string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -19,11 +28,29 @@ var rootCmd = &cobra.Command{
 	Long: `
 go-hammer is a load testing tool written in Go.
 This CLI serves as a quick way to run load tests 
-by just invoking commands without writing any
-scripts.`,
+by invoking commands without writing code.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
-	//	Run: func(cmd *cobra.Command, args []string) { },
+	Run: func(cmd *cobra.Command, args []string) {
+
+		config := core.RunConfig{
+			TPS:      tps,
+			Duration: duration,
+		}
+
+		hammer := new(hammers.HTTPHammer)
+		hammer.Endpoint = endpoint
+		hammer.Method = method
+		hammer.Body = []byte(payload)
+
+		if len(headers) > 0 {
+			var headersMap map[string]string
+			json.Unmarshal([]byte(headers), &headersMap)
+			hammer.Headers = headersMap
+		}
+
+		core.Run(config, hammer)
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -42,11 +69,20 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cli.yaml")
+	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cli.yaml")
+	rootCmd.Flags().StringVarP(&endpoint, "endpoint", "", "", "Specify HTTP target endpoint")
+	rootCmd.Flags().IntVarP(&tps, "tps", "", 1, "Number of requests per second")
+	rootCmd.Flags().IntVarP(&duration, "duration", "", 60, "Desired duration in seconds")
+	rootCmd.Flags().StringVarP(&method, "method", "", "GET", "HTTP method")
+	rootCmd.Flags().StringVarP(&payload, "payload", "", "", "Payload body for the HTTP requests")
+	rootCmd.Flags().StringVarP(&headers, "headers", "", "", "HTTP headers to include on each request")
+
+	// Mark required flags
+	rootCmd.MarkFlagRequired("endpoint")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
 // initConfig reads in config file and ENV variables if set.

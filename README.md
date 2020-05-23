@@ -19,12 +19,12 @@ cli run --endpoint https://aws.amazon.com --duration 60 --tps 1
 
 ```go
 import (
-	gohammer "github.com/ferdingler/go-hammer/core"
+	"github.com/ferdingler/go-hammer/core"
 	"github.com/ferdingler/go-hammer/hammers"
 )
 
 func main() {
-	config := gohammer.RunConfig{
+	config := core.RunConfig{
 		TPS:      10,
 		Duration: 60,
 	}
@@ -36,7 +36,7 @@ func main() {
 		"content-type": "application/json",
 	}
 
-	gohammer.Run(config, hammer)
+	core.Run(config, hammer)
 }
 ```
 
