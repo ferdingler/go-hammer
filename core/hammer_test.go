@@ -12,6 +12,7 @@ func (h *bananaHammer) Hit() HammerResponse {
 	return HammerResponse{
 		Latency: 100,
 		Status:  500,
+		Body:    []byte("Hello World"),
 	}
 }
 
@@ -34,6 +35,10 @@ func TestUseHammer(t *testing.T) {
 
 		if r.Status != 500 {
 			t.Errorf("Expected response status to be 500, got %d", r.Status)
+		}
+
+		if string(r.Body) != "Hello World" {
+			t.Errorf("Expected response body to be Hello World, got %d", r.Body)
 		}
 	case <-timeout:
 		t.Error("Test timeout exceeded")

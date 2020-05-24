@@ -16,6 +16,7 @@ type HammerResponse struct {
 	Status    int
 	Timestamp time.Time
 	Failed    bool
+	Body      []byte
 }
 
 func useHammer(h Hammer, out chan HammerResponse, wg *sync.WaitGroup) {
