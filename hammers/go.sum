@@ -2,3 +2,5 @@ github.com/ferdingler/go-hammer v0.1.0 h1:11SLGU3tTMisZnBmSieszLGyx9wVTQeG4YEyV3
 github.com/ferdingler/go-hammer/core v0.1.5/go.mod h1:hyn4BTlQ3qIESJp7nBJoAsbnLJ6NvmllguEei20sY/0=
 github.com/ferdingler/go-hammer/core v0.1.6 h1:H0VAn9a8S93cGs1cdj005Ax6WedciD4MgSzxr91X434=
 github.com/ferdingler/go-hammer/core v0.1.6/go.mod h1:hyn4BTlQ3qIESJp7nBJoAsbnLJ6NvmllguEei20sY/0=
+github.com/ferdingler/go-hammer/core v0.1.7 h1:WAm23pLiuc7c/uB69xeTetc3X7L2o5FspcKhlpmiEIY=
+github.com/ferdingler/go-hammer/core v0.1.7/go.mod h1:hyn4BTlQ3qIESJp7nBJoAsbnLJ6NvmllguEei20sY/0=

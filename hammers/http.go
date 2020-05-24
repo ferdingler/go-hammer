@@ -2,6 +2,7 @@ package hammers
 
 import (
 	"bytes"
+	"io/ioutil"
 	"net/http"
 	"time"
 
@@ -42,12 +43,14 @@ func (h *HTTPHammer) Hit() core.HammerResponse {
 		}
 	}
 
-	// close response body
+	body, _ := ioutil.ReadAll(res.Body)
 	defer res.Body.Close()
+
 	return core.HammerResponse{
 		Latency:   int(diff.Milliseconds()),
 		Status:    res.StatusCode,
 		Timestamp: start.UTC(),
+		Body:      body,
 	}
 }
 
