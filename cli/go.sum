@@ -49,8 +49,12 @@ github.com/ferdingler/go-hammer/core v0.1.5 h1:vK3RwvFwNRNjgaQzWB0O3PIOXfNX/pPA+
 github.com/ferdingler/go-hammer/core v0.1.5/go.mod h1:hyn4BTlQ3qIESJp7nBJoAsbnLJ6NvmllguEei20sY/0=
 github.com/ferdingler/go-hammer/core v0.1.6 h1:H0VAn9a8S93cGs1cdj005Ax6WedciD4MgSzxr91X434=
 github.com/ferdingler/go-hammer/core v0.1.6/go.mod h1:hyn4BTlQ3qIESJp7nBJoAsbnLJ6NvmllguEei20sY/0=
+github.com/ferdingler/go-hammer/core v0.1.7 h1:WAm23pLiuc7c/uB69xeTetc3X7L2o5FspcKhlpmiEIY=
+github.com/ferdingler/go-hammer/core v0.1.7/go.mod h1:hyn4BTlQ3qIESJp7nBJoAsbnLJ6NvmllguEei20sY/0=
 github.com/ferdingler/go-hammer/hammers v0.1.0 h1:HZGT3ij0r5pL/OmSHS5ebhFo3vawGq0JuiWo4v1jIEc=
 github.com/ferdingler/go-hammer/hammers v0.1.0/go.mod h1:Yca+M+EbNz7rhX3gUB4/stGqaPfHslBBj6UUbjzf7uA=
+github.com/ferdingler/go-hammer/hammers v0.1.1 h1:TnRiBguQS2CzH28rjfVxI3Xf7R5mjI2ykgRGtVj7Vy0=
+github.com/ferdingler/go-hammer/hammers v0.1.1/go.mod h1:JCMPu9sXOFtEcUWh7uFjKD3O7ezlRWj5y7vdKLqi+rc=
 github.com/fsnotify/fsnotify v1.4.7 h1:IXs+QLmnXW2CcXuY+8Mzv/fWEsPGWxqefPtCP5CnV9I=
 github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=
 github.com/ghodss/yaml v1.0.0/go.mod h1:4dBDuWmgqj2HViK6kFavaiC9ZROes6MMH2rRYeMEF04=
