@@ -17,7 +17,7 @@ The easiest way to get started is by using the CLI.
 cli --endpoint https://www.google.com --duration 60 --tps 1
 ```
 
-To install the CLI, run `go install` within the _cli_ folder.
+To install the CLI, run `go install` within the [cli](cli/) folder.
 
 ### Core Library
 
