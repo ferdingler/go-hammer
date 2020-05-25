@@ -1,10 +1,11 @@
 package core
 
 import (
+	"encoding/json"
 	"fmt"
 )
 
-func outResponse(response HammerResponse) {
+func printResponse(response HammerResponse) {
 	fmt.Printf("%s,%d,%d\n",
 		response.Timestamp,
 		response.Status,
@@ -12,12 +13,7 @@ func outResponse(response HammerResponse) {
 	)
 }
 
-func outSummary(summary runSummary) {
-	fmt.Println("--")
-	fmt.Println("Summary")
-	fmt.Println("--")
-	fmt.Printf("p99: %d\n", summary.p99)
-	fmt.Printf("p95: %d\n", summary.p95)
-	fmt.Printf("p90: %d\n", summary.p90)
-	fmt.Printf("p50: %d\n", summary.p50)
+func printSummary(summary RunSummary) {
+	jsonData, _ := json.MarshalIndent(summary, "", "  ")
+	fmt.Println(string(jsonData))
 }

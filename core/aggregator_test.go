@@ -39,8 +39,9 @@ func TestAggregator(t *testing.T) {
 	// Collect summary
 	select {
 	case summary := <-results:
-		if summary.p99 <= 0 {
-			t.Errorf("Expected p99 to be greater than zero, got %d", summary.p99)
+		req := summary.Requests
+		if req.TotalCount != 2 {
+			t.Errorf("Expected request count to be 2, got %d", req.TotalCount)
 		}
 	case <-timeout:
 		t.Error("Test timeout exceeded")
