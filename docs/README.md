@@ -1,6 +1,6 @@
 # Internals
 
-I started this project with the goal of learning Go during the COVID-19 quarantine. I decided to write a load generator because Load Testing is a space that I find really interesting and spend a lot of time thinking about. I also recently built a [Distributed Load Testing Engine on AWS](https://aws.amazon.com/solutions/implementations/distributed-load-testing-on-aws), so this topic was fresh in my mind. 
+I started this project with the goal of learning Go during the COVID-19 quarantine. I decided to write a load generator because Load Testing is a space that I find really interesting and spend a lot of time thinking about. We also recently built a [Distributed Load Testing Engine on AWS](https://aws.amazon.com/solutions/implementations/distributed-load-testing-on-aws), so this topic was fresh in my mind. 
 
 I will use this readme to document implementation details, design decisions, lessons learned and ideas I want to work on to improve the project. 
 
