@@ -3,6 +3,7 @@
 <img src="docs/logo.svg" align="right" height="140">
 
 ![Build](https://github.com/ferdingler/go-hammer/workflows/Build/badge.svg)
+![Docker Image CI](https://github.com/ferdingler/go-hammer/workflows/Docker%20Image%20CI/badge.svg)
 
 A load generator written in Go. 
 <br><br>
