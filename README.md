@@ -9,9 +9,18 @@ A load generator written in Go.
 
 ## Usage
 
+### Docker
+
+Using the docker image:
+
+```bash
+docker pull fdingler/go-hammer
+docker run -it go-hammer --endpoint https://google.com --tps 10
+```
+
 ### Command Line Tool
 
-The easiest way to get started is by using the CLI.
+Using the CLI directly. 
 
 ```bash
 cli --endpoint https://www.google.com --duration 60 --tps 1
