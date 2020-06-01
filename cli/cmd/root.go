@@ -23,8 +23,9 @@ var headers string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "gohammer",
-	Short: "A lightweight load testing tool",
+	Use:     "gohammer",
+	Short:   "A lightweight load testing tool",
+	Version: "v0.1.7",
 	Long: `
 go-hammer is a load testing tool written in Go.
 This CLI serves as a quick way to run load tests 
