@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/ferdingler/go-hammer/core"
-	"github.com/ferdingler/go-hammer/hammers"
+	"github.com/ferdingler/go-hammer/core/hammers"
 	"github.com/spf13/cobra"
 
 	homedir "github.com/mitchellh/go-homedir"
